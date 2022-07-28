@@ -1,0 +1,45 @@
+{
+  "name": "ld-jumpstarter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./lib/index.js",
+  "bin": {
+    "create": "./lib/index.js create",
+    "initialize": "./lib/index.js initialize"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "package": "pkg .",
+    "start": "ts-node src/index.ts",
+    "create": "npm run build && npm run test",
+    "build": "npx tsc",
+    "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "pkg": {
+    "scripts": "build/**/*.js"
+  },
+  "dependencies": {
+    "commander": "^9.4.0",
+    "configstore": "^6.0.0",
+    "dotenv": "^16.0.1",
+    "launchdarkly-api": "^10.0.0",
+    "node-emoji": "^1.11.0",
+    "parse-gitignore": "^2.0.0",
+    "prompts": "^2.4.2"
+  },
+  "devDependencies": {
+    "@types/configstore": "^6.0.0",
+    "@types/figlet": "^1.5.4",
+    "@types/node": "^18.6.2",
+    "@types/node-emoji": "^1.8.1",
+    "@types/parse-gitignore": "^1.0.0",
+    "@types/prompts": "^2.0.14",
+    "nodemon": "^2.0.19",
+    "pkg": "^5.8.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4"
+  }
+}
