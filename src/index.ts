@@ -5,12 +5,12 @@ import initialize from './commands/initialize'
 
 program
     .command('create')
-    .description('Create the flags in LaunchDarkly')
+    .description('Setup access key and create the flags in LaunchDarkly')
     .action(create)
 
 program
     .command('initialize')
-    .description('Setup access key in environment file')
+    .description('Setup client ID in environment file')
     .action(initialize)
 
 program.parse()
