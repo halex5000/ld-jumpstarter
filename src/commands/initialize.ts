@@ -37,7 +37,7 @@ const promptForClientSetup = async () => {
         };
 
         const updateGitIgnore = {
-            type: (prev: string) => prev || !isEnvIgnored ? 'confirm' : null,
+            type: (prev: string) => !isEnvIgnored ? 'confirm' : null,
             name: 'gitignoreConfirm',
             message: chalk.blueBright(`.env files should never be committed in Git, can I add '.env' to your '.gitignore' file?`),
         };
