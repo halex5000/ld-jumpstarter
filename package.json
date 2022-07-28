@@ -1,11 +1,14 @@
 {
   "name": "ld-jumpstarter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A module to jumpstart the setup of LaunchDarkly clients and flags",
   "main": "./lib/index.js",
   "bin": {
     "create": "./lib/index.js create",
     "initialize": "./lib/index.js initialize"
+  },
+  "repository": {
+    "url": "https://github.com/halex5000/ld-jumpstarter"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
