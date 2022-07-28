@@ -20,7 +20,7 @@
   "license": "ISC",
   "launchdarkly": {
     "project": {
-      "name": "LaunchDarkly",
+      "name": "default",
       "flags": [
         {
           "name": "Example Flag Name",
