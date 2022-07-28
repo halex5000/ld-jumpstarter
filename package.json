@@ -18,14 +18,36 @@
   "keywords": [],
   "author": "alexhardman@launchdarkly.com",
   "license": "ISC",
-  "pkg": {
-    "scripts": "build/**/*.js"
+  "launchdarkly": {
+    "project": {
+      "name": "LaunchDarkly",
+      "flags": [
+        {
+          "name": "Example Flag Name",
+          "key": "example-flag-key",
+          "description": "An example flag description",
+          "variations": [
+            {
+              "value": "yes",
+              "description": "Yes variation",
+              "name": "yes"
+            },
+            {
+              "value": "no",
+              "description": "No variation",
+              "name": "no"
+            }
+          ]
+        }
+      ]
+    }
   },
   "dependencies": {
+    "axios": "^0.27.2",
+    "chalk": "^4.1.2",
     "commander": "^9.4.0",
     "configstore": "^6.0.0",
     "dotenv": "^16.0.1",
-    "launchdarkly-api": "^10.0.0",
     "node-emoji": "^1.11.0",
     "parse-gitignore": "^2.0.0",
     "prompts": "^2.4.2"

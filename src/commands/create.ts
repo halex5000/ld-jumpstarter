@@ -5,6 +5,7 @@ import { appendFile, readFile } from 'fs';
 import { promisify } from 'util';
 import emoji from 'node-emoji'
 import { parse } from 'parse-gitignore'
+import axios from 'axios';
 
 const appendFileAsync = promisify(appendFile);
 const readFileAsync = promisify(readFile);
@@ -17,6 +18,12 @@ const isExtensionIgnored = async (extension: string) => {
 }
 
 const prompts = async () => {
+    const isEnvIgnored = await isExtensionIgnored('.env');
+
+    const packageJson = await readFileAsync('./package.json', 'utf-8');
+    const { launchdarkly } = JSON.parse(packageJson);
+    const hasValidConfig = launchdarkly && launchdarkly.project && launchdarkly.project.flags && launchdarkly.project.flags.length > 0;
+
     const flagSetupConfirmation = {
         type: 'confirm',
         name: 'flagSetupConfirm',
@@ -28,21 +35,24 @@ const prompts = async () => {
         name: 'accessToken',
         message: chalk.blueBright('Please enter your LaunchDarkly access token: '),
         validate: (accessToken: string) => {
-            console.log('accessToken:', accessToken);
             return accessToken && accessToken.startsWith('api-') ? true : 'that doesn\'t look like an access token'
         }
-    };
+    }; 
 
     const promptForIgnore = {
-        type: (prev: string) => prev ? 'confirm' : null,
+        type: () => !isEnvIgnored ? 'confirm' : null,
         name: 'gitignoreConfirm',
         message: chalk.blueBright(`Access tokens should never be shared with anyone, can I add '.env' to your '.gitignore' file?`),
     };
 
     const promptForFlagSetup = {
-        type: 'confirm',
+        type: (prev: any) => prev ? 'confirm' : null,
         name:  'createFlags',
-        message: 'something'   
+        message: () => {
+            const formatFlags = (flags: any[]) => flags.map(flag => `\t ${flag.flagName} \n`)
+            const message: string = `we'll create the following flags in the ${launchdarkly.project.name} project \n ${formatFlags(launchdarkly.project.flags)}`;
+            return message;
+        }  
     }
 
     const prompts = [
@@ -61,15 +71,23 @@ const prompts = async () => {
             return false;
         },
         onSubmit: async (prompt: PromptObject, answer: any, answers: any[]) => {
-            if (prompt.name === 'flagSetupConfirm' && !answer) {
-                console.log(emoji.get('thumbsup') + chalk.blueBright(' skipping flag setup, rerun this script anytime if you change your mind'));
-                return true;
+            if (prompt.name === 'flagSetupConfirm') {
+                if (!answer) {
+                    console.log(emoji.get('thumbsup') + chalk.blueBright(' skipping flag setup, rerun this script anytime if you change your mind'));
+                    return true;
+                }
+                else {
+                    if (!hasValidConfig) {
+                        console.log(emoji.get('pensive') + chalk.blueBright(' please setup flags manually, the launchdarkly config in your project is incorrect or was not found'));
+                        return true;
+                    }
+                }
             } 
             if (prompt.name === 'accessToken' && answer) {
                 await appendFileAsync('./.env', `\n${LAUNCH_DARKLY_ACCESS_TOKEN_KEY}=${answer}`, 'utf8')
                 console.log(emoji.get('raised_hands') + chalk.green(` success adding your access token to the .env file!`))
                 console.log(emoji.get('wink') + chalk.green(` you can cmd+click on '.env' to see the changes to your file!`))
-                return true;
+                config();
             }
             if (prompt.name === 'gitignoreConfirm') {
                 if (answer) {
@@ -82,13 +100,17 @@ const prompts = async () => {
                     return;
                 }
             }
-            if (prompt.name === 'createFlagsConfirm') {
+            if (prompt.name === 'createFlags') {
                 if (answer) {
-                    const packageJson = await readFileAsync('./package.json', 'utf-8');
-                    const { flags } = JSON.parse(packageJson);
-                    if (!flags) {
-                        console.log(emoji.get('warning') + chalk.redBright(` no flags configuration found in 'package.json'!`) + emoji.get('warning'));
-                    }
+                    const response = await axios.post(
+                        `https://app.launchdarkly.com/api/v2/flags/${launchdarkly.project.name}`, 
+                        launchdarkly.project.flags[0], 
+                        {
+                            headers: {
+                                Authorization: process.env[LAUNCH_DARKLY_ACCESS_TOKEN_KEY],
+                            },
+                        });
+                    console.log(response.data);
                 }
             }
         }
