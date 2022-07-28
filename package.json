@@ -1,6 +1,6 @@
 {
   "name": "ld-jumpstarter",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A module to jumpstart the setup of LaunchDarkly clients and flags",
   "main": "./lib/index.js",
   "bin": {
