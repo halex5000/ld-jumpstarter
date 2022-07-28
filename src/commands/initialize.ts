@@ -88,9 +88,9 @@ export default async () => {
     console.log(chalk.blueBright('initializing LaunchDarkly client configuration'));
     console.log(chalk.blueBright('ctrl + c to abort setup'));
     const clientSetupResponse = await promptForClientSetup();
-    if (clientSetupResponse && clientSetupResponse.isCancelled) {
+    if (clientSetupResponse && !clientSetupResponse.isCancelled) {
         console.log(`${emoji.get('white_check_mark')} you're all set!`);
         console.log(`${emoji.get('champagne')} let's go pop some flags! ${emoji.get('champagne')}`);
-        console.log(`${emoji.get('information_source')}  you probably need to restart your application now to get the new env changes`);
+        console.log(`${emoji.get('information_source')}  if your app was running you probably need to restart your application now to get the new env changes`);
     }
 }
