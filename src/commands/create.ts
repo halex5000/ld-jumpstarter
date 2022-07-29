@@ -49,8 +49,8 @@ const prompts = async () => {
         type: (prev: any) => prev ? 'confirm' : null,
         name:  'createFlags',
         message: () => {
-            const formatFlags = (flags: any[]) => flags.map(flag => `\t ${flag.name} \n`)
-            const message: string = `we'll create the following flags in the ${launchdarkly.project.name} project \n ${formatFlags(launchdarkly.project.flags)}`;
+            const formatFlags = (flags: any[]) => flags.map(flag => `\n\t ${flag.name}`)
+            const message: string = `we'll create the following flags in the ${launchdarkly.project.name} project \n ${formatFlags(launchdarkly.project.flags)}\n`;
             return message;
         }  
     }
@@ -103,6 +103,7 @@ const prompts = async () => {
             if (prompt.name === 'createFlags') {
                 if (answer) {
                     for (const flag of launchdarkly.project.flags) {
+                        console.log(`creating flag: ${flag.name}`, flag)
                         try {
                             const response = await axios.post(
                                 `https://app.launchdarkly.com/api/v2/flags/${launchdarkly.project.name}`, 
@@ -117,6 +118,10 @@ const prompts = async () => {
                             console.log(emoji.get('raised_hands') + chalk.green(` success creating '${flag.name}' flag in ${launchdarkly.project.name}!`))
                         } catch (error) {
                             if (error.response) {
+                                const {data, status, headers} = error.response;
+                                console.log('error report', {
+                                    data, status, headers
+                                })
                                 console.log(emoji.get('x') + chalk.red(` failed to create ${flag.name} in ${launchdarkly.project.name}. sorry. \n you can run again or create this flag manually`))
                             }
                         }
