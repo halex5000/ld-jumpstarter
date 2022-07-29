@@ -70,8 +70,7 @@ You can create one [here](https://app.launchdarkly.com/settings/authorization/to
 3. Make sure you get the token after you created it. You only get to see it once.
 
 
-
-<COMING SOON>
+## COMING SOON
 
 - support for config not in `package.json`
 - GIF/images to demonstrate the expected experience
